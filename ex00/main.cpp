@@ -6,6 +6,11 @@ int main(int ac, char **av) {
 		return 1;
 	}
 
-	BitcoinExchange be(av[1]);
-	be.printData();
+	try {
+		BitcoinExchange be(av[1]);
+		//be.printData();
+		be.convertToRate();
+	} catch (std::exception &e) {
+		std::cout << e.what() << std::endl;
+	}
 }
