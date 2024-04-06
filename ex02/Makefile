@@ -3,7 +3,7 @@ SRCS = main.cpp PmergeMe.cpp
 INCS = incs
 OBJ_DIR = objs
 OBJS = $(addprefix $(OBJ_DIR)/, $(SRCS:.cpp=.o))
-CPP = c++
+CPP = c++ -fsanitize=address -g
 CPPFLAGS = -Wall -Wextra -Werror -std=c++98
 
 all : $(NAME)

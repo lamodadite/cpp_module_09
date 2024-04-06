@@ -1,4 +1,5 @@
 #include <PmergeMe.hpp>
+#include <ctime>
 
 bool validateInput(std::string s) {
 	char *endptr = NULL;
@@ -20,7 +21,8 @@ int main(int ac, char **av) {
 		std::cout << "Error" << std::endl;
 		return 1;
 	}
-	std::vector<int> originalData;
+	std::vector<std::pair<int, int> > originalDataVector;
+	IndexableList<std::pair<int, int> > originalDataList;
 	int i = 1;
 	while (i < ac) {
 		std::string stringTmp(av[i]);
@@ -32,13 +34,31 @@ int main(int ac, char **av) {
 				return 1;
 			}
 			if (stringBuffer.empty()) continue;
-			originalData.push_back(static_cast<int>(strtod(stringBuffer.c_str(), NULL)));
+			int num = static_cast<int>(strtod(stringBuffer.c_str(), NULL));
+			originalDataVector.push_back(std::make_pair(num, i - 1));
+			originalDataList.push_back(std::make_pair(num, i - 1));
+
 		}
-		++i;
+		i++;
 	}
 	PmergeMe pm;
-	std::vector<int> sorted = pm.mergeInsertionSort(originalData);
-	printContainer(originalData, "before");
-	printContainer(sorted, "after");
+
+	printContainer(originalDataVector, "vector before");
+	clock_t vecStart = clock();
+	std::vector<std::pair<int, int> > sortedVector = pm.mergeInsertionSort(originalDataVector, 1);
+	clock_t vecEnd = clock();
+	printContainer(sortedVector, "vector after");
+
+	std::cout << std::endl;
+	printContainer(originalDataList, "list before");
+	clock_t listStart = clock();
+	IndexableList<std::pair<int, int> > sortedList = pm.mergeInsertionSort(originalDataList, 1);
+	clock_t listEnd = clock();
+	printContainer(sortedVector, "list after");
+
+	std::cout << std::endl;
+	std::cout << std::fixed;
+	std::cout << "Time to process a range of " << originalDataVector.size() << " elements with std::vector : " << (float)(vecEnd - vecStart) / CLOCKS_PER_SEC * 1000 * 1000 << " us" << std::endl;
+	std::cout << "Time to process a range of " << originalDataList.size() << " elements with std::list  : " << (float)(listEnd - listStart) / CLOCKS_PER_SEC * 1000 * 1000 << " us" << std::endl;
 	return 0;
 }
